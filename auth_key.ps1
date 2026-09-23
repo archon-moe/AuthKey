@@ -62,20 +62,22 @@ foreach ($authKey in $authKeys) {
 
     if ($response -and $response.message -eq "OK") {
         $uid = Get-UidFromGachaResponse $response
-        $activeKeys += [PSCustomObject]@{
-            AuthKey = $authKey
-            Uid     = if ($uid) { $uid } else { "unknown (no wish history on banner 301)" }
-            Url     = $url
+        if ($uid) {
+            $activeKeys += [PSCustomObject]@{
+                AuthKey = $authKey
+                Uid     = $uid
+                Url     = $url
+            }
         }
     }
 }
 
 if ($activeKeys.Length -eq 0) {
-    Write-Host "No active keys found." -ForegroundColor Red
+    Write-Host "No keys with an identifiable UID found." -ForegroundColor Red
     return
 }
 
-Write-Host "`n$($activeKeys.Length) active key(s) found:`n"
+Write-Host "`n$($activeKeys.Length) key(s) with UID found:`n"
 $i = 1
 foreach ($k in $activeKeys) {
     Write-Host "[$i] UID: $($k.Uid)"
